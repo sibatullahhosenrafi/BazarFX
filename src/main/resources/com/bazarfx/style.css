@@ -1,0 +1,91 @@
+.auth-root {
+    -fx-background-color: linear-gradient(to bottom right, #1F3864, #2E75B6);
+}
+
+.app-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.app-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #DCE6F1;
+}
+
+.nav-bar {
+    -fx-background-color: #1F3864;
+}
+
+.nav-brand {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 0 20 0 0;
+}
+
+.nav-button, .nav-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
+.nav-button:hover {
+    -fx-background-color: #2E75B6;
+}
+
+.nav-button-danger:hover {
+    -fx-background-color: #B00020;
+}
+
+.welcome-label {
+    -fx-text-fill: #DCE6F1;
+    -fx-alignment: center-right;
+}
+
+.notif-panel {
+    -fx-background-color: #F2F2F2;
+    -fx-border-color: #D9D9D9;
+    -fx-border-width: 0 0 0 1;
+}
+
+.panel-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F3864;
+}
+
+.price-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2E75B6;
+}
+
+.primary-button {
+    -fx-background-color: #2E75B6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1F3864;
+}
+
+.secondary-button {
+    -fx-background-color: #DCE6F1;
+    -fx-text-fill: #1F3864;
+}
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E75B6;
+    -fx-underline: true;
+}
+
+.error-label {
+    -fx-text-fill: #B00020;
+}
+
+.status-label {
+    -fx-text-fill: #1F3864;
+}
