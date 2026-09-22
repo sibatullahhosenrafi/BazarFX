@@ -1,0 +1,151 @@
+package com.bazarfx.controller;
+
+import com.bazarfx.AppContext;
+import com.bazarfx.model.Product;
+import java.io.File;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+public class BrowseController {
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> categoryFilter;
+    @FXML
+    private Label resultsCountLabel;
+    @FXML
+    private FlowPane productGrid;
+    private MainController mainController;
+    private static final double CARD_WIDTH = (double)190.0F;
+    private static final double IMAGE_HEIGHT = (double)140.0F;
+
+    @FXML
+    private void initialize() {
+        this.categoryFilter.setItems(FXCollections.observableArrayList(new String[]{"All", "Electronics", "Vehicles", "Furniture", "Fashion", "Books", "Other"}));
+        this.categoryFilter.setValue("All");
+        this.refresh();
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @FXML
+    private void onSearch() {
+        String keyword = this.searchField.getText();
+        String category = (String)this.categoryFilter.getValue();
+        this.renderProducts(AppContext.get().productService.search(keyword, category));
+    }
+
+    private void refresh() {
+        this.renderProducts(AppContext.get().productService.getAllActive());
+    }
+
+    private void renderProducts(List<Product> products) {
+        this.productGrid.getChildren().clear();
+        Label var10000 = this.resultsCountLabel;
+        int var10001 = products.size();
+        var10000.setText(var10001 + (products.size() == 1 ? " listing found" : " listings found"));
+
+        for(Product product : products) {
+            this.productGrid.getChildren().add(this.createProductCard(product));
+        }
+
+    }
+
+    private VBox createProductCard(Product product) {
+        VBox card = new VBox((double)6.0F);
+        card.setPrefWidth((double)190.0F);
+        card.setMaxWidth((double)190.0F);
+        card.getStyleClass().add("product-card");
+        card.getChildren().add(this.buildThumbnail(product));
+        String var10002 = this.formatPrice(product.getPrice());
+        Label priceLabel = new Label("BDT " + var10002);
+        priceLabel.getStyleClass().add("card-price");
+        Label titleLabel = new Label(product.getTitle());
+        titleLabel.getStyleClass().add("card-title");
+        titleLabel.setWrapText(true);
+        titleLabel.setMaxHeight((double)38.0F);
+        var10002 = this.safe(product.getLocation());
+        Label locationLabel = new Label("\ud83d\udccd " + var10002);
+        locationLabel.getStyleClass().add("card-meta");
+        HBox badgeRow = new HBox((double)6.0F);
+        badgeRow.setAlignment(Pos.CENTER_LEFT);
+        Label conditionBadge = new Label(this.safe(product.getCondition()));
+        conditionBadge.getStyleClass().add("New".equalsIgnoreCase(product.getCondition()) ? "badge-new" : "badge-used");
+        Label categoryBadge = new Label(this.safe(product.getCategory()));
+        categoryBadge.getStyleClass().add("badge-category");
+        badgeRow.getChildren().addAll(new Node[]{conditionBadge, categoryBadge});
+        card.getChildren().addAll(new Node[]{priceLabel, titleLabel, badgeRow, locationLabel});
+        card.setOnMouseClicked((e) -> this.openSelected(product));
+        return card;
+    }
+
+    private StackPane buildThumbnail(Product product) {
+        StackPane frame = new StackPane();
+        frame.setPrefSize((double)190.0F, (double)140.0F);
+        frame.setMaxSize((double)190.0F, (double)140.0F);
+        frame.getStyleClass().add("card-image-frame");
+        List<String> imagePaths = product.getImagePaths();
+        if (imagePaths != null && !imagePaths.isEmpty()) {
+            File file = new File((String)imagePaths.get(0));
+            if (file.exists()) {
+                ImageView imageView = new ImageView(new Image(file.toURI().toString(), (double)190.0F, (double)140.0F, false, true));
+                imageView.setFitWidth((double)190.0F);
+                imageView.setFitHeight((double)140.0F);
+                frame.getChildren().add(imageView);
+                return frame;
+            }
+        }
+
+        Label placeholder = new Label(this.categoryIcon(product.getCategory()));
+        placeholder.getStyleClass().add("card-image-placeholder");
+        frame.getChildren().add(placeholder);
+        return frame;
+    }
+
+    private String categoryIcon(String category) {
+        if (category == null) {
+            return "\ud83c\udff7";
+        } else {
+            String var10000;
+            switch (category) {
+                case "Electronics" -> var10000 = "\ud83d\udcbb";
+                case "Vehicles" -> var10000 = "\ud83d\ude97";
+                case "Furniture" -> var10000 = "\ud83d\udecb";
+                case "Fashion" -> var10000 = "\ud83d\udc55";
+                case "Books" -> var10000 = "\ud83d\udcda";
+                default -> var10000 = "\ud83c\udff7";
+            }
+
+            return var10000;
+        }
+    }
+
+    private String formatPrice(double price) {
+        return price == Math.floor(price) ? String.format("%,.0f", price) : String.format("%,.2f", price);
+    }
+
+    private String safe(String value) {
+        return value != null && !value.isBlank() ? value : "-";
+    }
+
+    private void openSelected(Product product) {
+        if (this.mainController != null) {
+            this.mainController.openProductDetail(product.getId());
+        }
+
+    }
+}
