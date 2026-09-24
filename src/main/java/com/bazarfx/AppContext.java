@@ -1,5 +1,6 @@
 package com.bazarfx;
 
+import com.bazarfx.api.ExchangeRateClient;
 import com.bazarfx.concurrency.ImageProcessor;
 import com.bazarfx.concurrency.OrderStatusSimulator;
 import com.bazarfx.concurrency.ReportGenerator;
@@ -29,14 +30,16 @@ public class AppContext {
     public final ImageProcessor imageProcessor = new ImageProcessor();
     public final OrderStatusSimulator orderStatusSimulator = new OrderStatusSimulator(orderService);
     public final ReportGenerator reportGenerator = new ReportGenerator();
+    // Week 7: JSON Parsing and API Response Handling - live BDT -> USD conversion.
+    public final ExchangeRateClient exchangeRateClient = new ExchangeRateClient();
 
     // Session-only cart/wishlist - kept in memory for the currently logged-in user.
     public final List<CartItem> cart = new ArrayList<>();
     public final List<String> wishlistProductIds = new ArrayList<>();
 
     private AppContext() {
+        com.bazarfx.seed.DemoDataSeeder.seedIfEmpty(this);
     }
-
     public static AppContext get() {
         return INSTANCE;
     }
