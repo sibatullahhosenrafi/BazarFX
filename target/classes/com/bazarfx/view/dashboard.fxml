@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16.0" styleClass="dashboard-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bazarfx.controller.DashboardController">
+    <padding>
+        <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
+    </padding>
+
+    <VBox spacing="2.0">
+        <Label styleClass="panel-title" text="Dashboard"/>
+        <Label styleClass="dashboard-subtitle" text="Your seller performance at a glance"/>
+    </VBox>
+
+    <ScrollPane fitToWidth="true" styleClass="dashboard-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="16.0">
+
+            <!-- Top stat row -->
+            <HBox spacing="14.0">
+                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                    <Label styleClass="stat-tile-label" text="TOTAL REVENUE"/>
+                    <Label fx:id="statRevenueLabel" styleClass="stat-tile-value" text="BDT 0.00"/>
+                </VBox>
+                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                    <Label styleClass="stat-tile-label" text="ORDERS"/>
+                    <Label fx:id="statOrdersLabel" styleClass="stat-tile-value" text="0"/>
+                </VBox>
+                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                    <Label styleClass="stat-tile-label" text="LISTINGS"/>
+                    <Label fx:id="statListingsLabel" styleClass="stat-tile-value" text="0"/>
+                </VBox>
+                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                    <Label styleClass="stat-tile-label" text="SELLER RATING"/>
+                    <Label fx:id="statRatingLabel" styleClass="stat-tile-value" text="No ratings yet"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="16.0">
+                <!-- Order Status Distribution -->
+                <VBox spacing="10.0" styleClass="report-card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="card-heading" text="Order Status Distribution"/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label styleClass="status-name" text="Pending" prefWidth="80.0"/>
+                        <ProgressBar fx:id="pendingBar" progress="0" styleClass="bar-pending" HBox.hgrow="ALWAYS" prefHeight="10.0"/>
+                        <Label fx:id="pendingCountLabel" styleClass="status-count" text="0"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label styleClass="status-name" text="Confirmed" prefWidth="80.0"/>
+                        <ProgressBar fx:id="confirmedBar" progress="0" styleClass="bar-confirmed" HBox.hgrow="ALWAYS" prefHeight="10.0"/>
+                        <Label fx:id="confirmedCountLabel" styleClass="status-count" text="0"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label styleClass="status-name" text="Shipped" prefWidth="80.0"/>
+                        <ProgressBar fx:id="shippedBar" progress="0" styleClass="bar-shipped" HBox.hgrow="ALWAYS" prefHeight="10.0"/>
+                        <Label fx:id="shippedCountLabel" styleClass="status-count" text="0"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label styleClass="status-name" text="Delivered" prefWidth="80.0"/>
+                        <ProgressBar fx:id="deliveredBar" progress="0" styleClass="bar-delivered" HBox.hgrow="ALWAYS" prefHeight="10.0"/>
+                        <Label fx:id="deliveredCountLabel" styleClass="status-count" text="0"/>
+                    </HBox>
+                </VBox>
+
+                <!-- My Listings -->
+                <VBox spacing="10.0" styleClass="report-card" prefWidth="320.0">
+                    <Label styleClass="card-heading" text="My Listings"/>
+                    <ListView fx:id="myListingsView" prefHeight="160.0" VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </HBox>
+
+            <!-- Marketplace insights (background report generation) -->
+            <VBox spacing="10.0" styleClass="report-card">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label styleClass="card-heading" text="Marketplace Insights"/>
+                    <ProgressIndicator fx:id="reportProgress" prefHeight="20.0" prefWidth="20.0"/>
+                </HBox>
+                <Label styleClass="dashboard-subtitle" text="Aggregated across every listing and order on BazarFX, computed on background threads."/>
+                <Button onAction="#onGenerateReport" styleClass="secondary-button" text="Generate Report"/>
+
+                <HBox spacing="24.0">
+                    <Label fx:id="marketRevenueLabel" styleClass="status-label"/>
+                    <Label fx:id="marketCategoryLabel" styleClass="status-label"/>
+                </HBox>
+                <HBox spacing="24.0">
+                    <Label fx:id="marketSellerLabel" styleClass="status-label"/>
+                    <Label fx:id="marketOrdersLabel" styleClass="status-label"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

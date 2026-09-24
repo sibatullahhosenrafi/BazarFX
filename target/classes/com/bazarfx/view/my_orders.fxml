@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bazarfx.controller.MyOrdersController">
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+
+    <Label styleClass="panel-title" text="My Orders"/>
+    <Label text="Backed by a real SQLite table - statuses refresh automatically as they change."/>
+
+    <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="productColumn" prefWidth="220.0" text="Product"/>
+            <TableColumn fx:id="quantityColumn" prefWidth="60.0" text="Qty"/>
+            <TableColumn fx:id="totalColumn" prefWidth="110.0" text="Total (BDT)"/>
+            <TableColumn fx:id="statusColumn" prefWidth="110.0" text="Status"/>
+            <TableColumn fx:id="dateColumn" prefWidth="180.0" text="Placed On"/>
+            <TableColumn fx:id="actionColumn" prefWidth="90.0" text="Action"/>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER_LEFT" spacing="14.0">
+        <Label fx:id="statusMessageLabel" HBox.hgrow="ALWAYS"/>
+        <Button onAction="#onRefresh" styleClass="secondary-button" text="Refresh"/>
+    </HBox>
+</VBox>

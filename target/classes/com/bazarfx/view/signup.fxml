@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="12.0" styleClass="auth-root"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bazarfx.controller.SignupController">
+    <padding>
+        <Insets bottom="40.0" left="60.0" right="60.0" top="40.0"/>
+    </padding>
+
+    <Label styleClass="app-title" text="Create your BazarFX account"/>
+
+    <VBox maxWidth="340.0" spacing="10.0" styleClass="auth-card">
+        <TextField fx:id="usernameField" promptText="Username"/>
+        <TextField fx:id="emailField" promptText="Email"/>
+        <TextField fx:id="phoneField" promptText="Phone number"/>
+        <TextField fx:id="locationField" promptText="Location (e.g. Dhaka)"/>
+        <PasswordField fx:id="passwordField" promptText="Password"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm password"/>
+        <Button maxWidth="Infinity" onAction="#onSignup" styleClass="primary-button" text="Sign Up"/>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+        <Button maxWidth="Infinity" onAction="#onGoToLogin" styleClass="link-button" text="Already have an account? Log in"/>
+    </VBox>
+</VBox>
