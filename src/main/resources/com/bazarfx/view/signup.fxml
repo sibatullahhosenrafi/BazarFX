@@ -16,7 +16,7 @@
 
     <Label styleClass="app-title" text="Create your BazarFX account"/>
 
-    <VBox maxWidth="340.0" spacing="10.0">
+    <VBox maxWidth="340.0" spacing="10.0" styleClass="auth-card">
         <TextField fx:id="usernameField" promptText="Username"/>
         <TextField fx:id="emailField" promptText="Email"/>
         <TextField fx:id="phoneField" promptText="Phone number"/>
