@@ -17,7 +17,7 @@
     <Label styleClass="app-title" text="BazarFX"/>
     <Label styleClass="app-subtitle" text="Log in to buy and sell locally"/>
 
-    <VBox maxWidth="320.0" spacing="10.0">
+    <VBox maxWidth="320.0" spacing="10.0" styleClass="auth-card">
         <TextField fx:id="usernameField" promptText="Username"/>
         <PasswordField fx:id="passwordField" promptText="Password"/>
         <Button maxWidth="Infinity" onAction="#onLogin" styleClass="primary-button" text="Log In"/>
