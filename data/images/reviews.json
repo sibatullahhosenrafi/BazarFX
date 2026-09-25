@@ -1,0 +1,20 @@
+[
+  {
+    "id": "5b32a704",
+    "orderId": "seed-order-1",
+    "sellerUsername": "demo_seller",
+    "buyerUsername": "demo_buyer",
+    "rating": 5,
+    "comment": "Item exactly as described, smooth pickup. Highly recommended seller!",
+    "createdAt": "2026-09-23T02:24:54.179054500"
+  },
+  {
+    "id": "05232853",
+    "orderId": "seed-order-2",
+    "sellerUsername": "demo_seller",
+    "buyerUsername": "demo_buyer",
+    "rating": 4,
+    "comment": "Good condition, slightly delayed reply but overall a fair deal.",
+    "createdAt": "2026-09-23T02:24:54.182077900"
+  }
+]

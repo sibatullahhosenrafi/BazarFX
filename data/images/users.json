@@ -1,0 +1,34 @@
+[
+  {
+    "username": "rafii",
+    "email": "sibatulla@gmail.com",
+    "phone": "01319097686",
+    "location": "Khulna",
+    "passwordHash": "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ\u003d",
+    "joinDate": "2026-09-25"
+  },
+  {
+    "username": "rafi",
+    "email": "siba@gmail.com",
+    "phone": "0131909786",
+    "location": "Khulna",
+    "passwordHash": "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ\u003d",
+    "joinDate": "2026-09-23"
+  },
+  {
+    "username": "demo_buyer",
+    "email": "buyer@bazarfx.demo",
+    "phone": "01722000000",
+    "location": "Chattogram",
+    "passwordHash": "Dq0gYLZZktykdpr2AaGzo17zjPrSwsRluxYOp2QVfF0\u003d",
+    "joinDate": "2026-09-23"
+  },
+  {
+    "username": "demo_seller",
+    "email": "seller@bazarfx.demo",
+    "phone": "01711000000",
+    "location": "Dhaka",
+    "passwordHash": "Dq0gYLZZktykdpr2AaGzo17zjPrSwsRluxYOp2QVfF0\u003d",
+    "joinDate": "2026-09-23"
+  }
+]
