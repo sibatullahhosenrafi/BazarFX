@@ -70,7 +70,7 @@ public class MyOrdersController {
             private final Button cancelButton = new Button("Cancel");
 
             {
-                cancelButton.getStyleClass().add("secondary-button");
+                cancelButton.getStyleClass().addAll("secondary-button", "table-action-button");
                 cancelButton.setOnAction(e -> {
                     Order order = getTableView().getItems().get(getIndex());
                     boolean cancelled = AppContext.get().orderService.cancelOrder(order.getId());

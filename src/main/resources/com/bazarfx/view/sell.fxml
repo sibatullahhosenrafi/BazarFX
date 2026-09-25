@@ -24,7 +24,7 @@
 
     <HBox spacing="10.0">
         <ComboBox fx:id="categoryField" prefWidth="180.0" promptText="Category"/>
-        <ComboBox fx:id="conditionField" prefWidth="140.0" promptText="Condition"/>
+        <ComboBox fx:id="conditionField" prefWidth="155.0" promptText="Condition"/>
         <TextField fx:id="priceField" promptText="Price (BDT)" HBox.hgrow="ALWAYS"/>
     </HBox>
 

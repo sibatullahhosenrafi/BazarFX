@@ -24,7 +24,7 @@
             <TableColumn fx:id="totalColumn" prefWidth="110.0" text="Total (BDT)"/>
             <TableColumn fx:id="statusColumn" prefWidth="110.0" text="Status"/>
             <TableColumn fx:id="dateColumn" prefWidth="180.0" text="Placed On"/>
-            <TableColumn fx:id="actionColumn" prefWidth="90.0" text="Action"/>
+            <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action"/>
         </columns>
     </TableView>
 

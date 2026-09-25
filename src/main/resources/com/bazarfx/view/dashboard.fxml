@@ -26,19 +26,19 @@
 
             <!-- Top stat row -->
             <HBox spacing="14.0">
-                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                <VBox styleClass="stat-tile, stat-tile-1" HBox.hgrow="ALWAYS">
                     <Label styleClass="stat-tile-label" text="TOTAL REVENUE"/>
                     <Label fx:id="statRevenueLabel" styleClass="stat-tile-value" text="BDT 0.00"/>
                 </VBox>
-                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                <VBox styleClass="stat-tile, stat-tile-2" HBox.hgrow="ALWAYS">
                     <Label styleClass="stat-tile-label" text="ORDERS"/>
                     <Label fx:id="statOrdersLabel" styleClass="stat-tile-value" text="0"/>
                 </VBox>
-                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                <VBox styleClass="stat-tile, stat-tile-3" HBox.hgrow="ALWAYS">
                     <Label styleClass="stat-tile-label" text="LISTINGS"/>
                     <Label fx:id="statListingsLabel" styleClass="stat-tile-value" text="0"/>
                 </VBox>
-                <VBox styleClass="stat-tile" HBox.hgrow="ALWAYS">
+                <VBox styleClass="stat-tile, stat-tile-4" HBox.hgrow="ALWAYS">
                     <Label styleClass="stat-tile-label" text="SELLER RATING"/>
                     <Label fx:id="statRatingLabel" styleClass="stat-tile-value" text="No ratings yet"/>
                 </VBox>

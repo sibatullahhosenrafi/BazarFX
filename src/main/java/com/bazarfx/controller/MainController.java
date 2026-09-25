@@ -14,20 +14,31 @@ import javafx.scene.layout.BorderPane;
 /**
  * Shell screen: a left sidebar (Browse / Sell / Cart / My Orders / Dashboard)
  * plus a center pane whose content is swapped between screens, and a live
- * notification list fed by the background NotificationService. The sidebar
- * button matching whatever screen is currently open gets a highlighted
- * "active" style, same idea as the highlighted item in the reference design.
+ * notification list fed by the background NotificationService.
+ *
+ * Each sidebar button carries its own semantic CSS class (browse-btn, sell-btn,
+ * cart-btn, orders-btn, dash-btn) so the active state gradient matches the
+ * button's own color.
+ *
+ * The theme toggle button switches dark-mode on and off by adding / removing
+ * the "dark-mode" CSS class from mainRoot. All looked-up color tokens are
+ * redefined under .dark-mode in style.css, so child nodes inherit them
+ * automatically without needing the class themselves.
  */
 public class MainController {
 
+    @FXML private BorderPane mainRoot;
     @FXML private BorderPane centerPane;
-    @FXML private Label welcomeLabel;
+    @FXML private Label      welcomeLabel;
     @FXML private ListView<String> notificationList;
-    @FXML private Button navBrowseButton;
-    @FXML private Button navSellButton;
-    @FXML private Button navCartButton;
-    @FXML private Button navOrdersButton;
-    @FXML private Button navDashboardButton;
+    @FXML private Button     navBrowseButton;
+    @FXML private Button     navSellButton;
+    @FXML private Button     navCartButton;
+    @FXML private Button     navOrdersButton;
+    @FXML private Button     navDashboardButton;
+    @FXML private Button     themeToggleButton;
+
+    private boolean darkMode = false;
 
     @FXML
     private void initialize() {
@@ -36,18 +47,39 @@ public class MainController {
         openBrowse();
     }
 
+    // ── Theme toggle ──────────────────────────────────────────────────────────
+
+    @FXML
+    private void toggleTheme() {
+        darkMode = !darkMode;
+        if (darkMode) {
+            mainRoot.getStyleClass().add("dark-mode");
+            themeToggleButton.setText("\u263C  Light Mode");   // ☼
+        } else {
+            mainRoot.getStyleClass().remove("dark-mode");
+            themeToggleButton.setText("\u263D  Dark Mode");    // ☽
+        }
+    }
+
+    // ── Sidebar active-state management ──────────────────────────────────────
+
     private void setActiveNavButton(Button active) {
-        for (Button b : new Button[]{navBrowseButton, navSellButton, navCartButton, navOrdersButton, navDashboardButton}) {
+        for (Button b : new Button[]{
+                navBrowseButton, navSellButton, navCartButton,
+                navOrdersButton, navDashboardButton}) {
             if (b != null) b.getStyleClass().remove("side-nav-button-active");
         }
         if (active != null) active.getStyleClass().add("side-nav-button-active");
     }
 
+    // ── Navigation actions ────────────────────────────────────────────────────
+
     @FXML
     public void openBrowse() {
         setActiveNavButton(navBrowseButton);
         Parent[] rootHolder = new Parent[1];
-        BrowseController controller = SceneManager.loadFragmentWithController("browse.fxml", rootHolder);
+        BrowseController controller =
+                SceneManager.loadFragmentWithController("browse.fxml", rootHolder);
         controller.setMainController(this);
         centerPane.setCenter(rootHolder[0]);
     }
@@ -56,7 +88,8 @@ public class MainController {
     private void openSell() {
         setActiveNavButton(navSellButton);
         Parent[] rootHolder = new Parent[1];
-        SellController controller = SceneManager.loadFragmentWithController("sell.fxml", rootHolder);
+        SellController controller =
+                SceneManager.loadFragmentWithController("sell.fxml", rootHolder);
         controller.setMainController(this);
         centerPane.setCenter(rootHolder[0]);
     }
@@ -65,7 +98,8 @@ public class MainController {
     private void openCart() {
         setActiveNavButton(navCartButton);
         Parent[] rootHolder = new Parent[1];
-        CartController controller = SceneManager.loadFragmentWithController("cart.fxml", rootHolder);
+        CartController controller =
+                SceneManager.loadFragmentWithController("cart.fxml", rootHolder);
         controller.setMainController(this);
         centerPane.setCenter(rootHolder[0]);
     }
@@ -89,7 +123,8 @@ public class MainController {
         SceneManager.switchTo("login.fxml", "BazarFX - Log In");
     }
 
-    /** Called from BrowseController when a listing is opened. */
+    // ── Called from child controllers ─────────────────────────────────────────
+
     public void openProductDetail(String productId) {
         Parent[] rootHolder = new Parent[1];
         ProductDetailController controller =

@@ -7,31 +7,39 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="mainRoot"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.bazarfx.controller.MainController">
     <left>
         <VBox styleClass="sidebar" BorderPane.alignment="CENTER">
+
+            <!-- Brand header -->
             <VBox styleClass="sidebar-brand">
                 <Label styleClass="nav-brand" text="BazarFX"/>
                 <Label styleClass="sidebar-tagline" text="Buy &amp; Sell Marketplace"/>
             </VBox>
 
-            <VBox spacing="4.0" styleClass="sidebar-nav" VBox.vgrow="ALWAYS">
-                <Button fx:id="navBrowseButton" maxWidth="Infinity" onAction="#openBrowse"
-                        styleClass="side-nav-button" text="&#128715;  Browse"/>
-                <Button fx:id="navSellButton" maxWidth="Infinity" onAction="#openSell"
-                        styleClass="side-nav-button" text="&#10133;  Sell"/>
-                <Button fx:id="navCartButton" maxWidth="Infinity" onAction="#openCart"
-                        styleClass="side-nav-button" text="&#128722;  Cart"/>
-                <Button fx:id="navOrdersButton" maxWidth="Infinity" onAction="#openMyOrders"
-                        styleClass="side-nav-button" text="&#128230;  My Orders"/>
+            <!-- Navigation links -->
+            <VBox spacing="5.0" styleClass="sidebar-nav" VBox.vgrow="ALWAYS">
+                <Button fx:id="navBrowseButton"  maxWidth="Infinity" onAction="#openBrowse"
+                        styleClass="side-nav-button,browse-btn"  text="&#128715;  Browse"/>
+                <Button fx:id="navSellButton"    maxWidth="Infinity" onAction="#openSell"
+                        styleClass="side-nav-button,sell-btn"    text="&#10133;  Sell"/>
+                <Button fx:id="navCartButton"    maxWidth="Infinity" onAction="#openCart"
+                        styleClass="side-nav-button,cart-btn"    text="&#128722;  Cart"/>
+                <Button fx:id="navOrdersButton"  maxWidth="Infinity" onAction="#openMyOrders"
+                        styleClass="side-nav-button,orders-btn"  text="&#128230;  My Orders"/>
                 <Button fx:id="navDashboardButton" maxWidth="Infinity" onAction="#openDashboard"
-                        styleClass="side-nav-button" text="&#128202;  Dashboard"/>
+                        styleClass="side-nav-button,dash-btn"   text="&#128202;  Dashboard"/>
             </VBox>
 
+            <!-- Footer: user, theme toggle, logout -->
             <VBox spacing="8.0" styleClass="sidebar-footer">
                 <Label fx:id="welcomeLabel" styleClass="welcome-label" wrapText="true"/>
-                <Button maxWidth="Infinity" onAction="#onLogout" styleClass="nav-button-danger" text="&#9099;  Log Out"/>
+                <Button fx:id="themeToggleButton" maxWidth="Infinity" onAction="#toggleTheme"
+                        styleClass="theme-toggle-button" text="&#9789;  Dark Mode"/>
+                <Button maxWidth="Infinity" onAction="#onLogout"
+                        styleClass="nav-button-danger" text="&#9099;  Log Out"/>
             </VBox>
         </VBox>
     </left>

@@ -8,15 +8,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<VBox spacing="14.0" styleClass="detail-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.bazarfx.controller.ProductDetailController">
     <padding>
         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
     </padding>
 
-    <Button onAction="#onBackToBrowse" styleClass="link-button" text="&lt; Back to Browse"/>
+    <Button onAction="#onBackToBrowse" styleClass="back-button" text="&#8592;  Back to Browse"/>
 
-    <HBox spacing="20.0">
+    <HBox spacing="20.0" styleClass="detail-card">
         <VBox spacing="8.0">
             <ImageView fx:id="photoView" fitHeight="200.0" fitWidth="260.0" preserveRatio="true"/>
             <ScrollPane fitToHeight="true" hbarPolicy="AS_NEEDED" prefHeight="76.0" prefWidth="260.0" vbarPolicy="NEVER">
@@ -26,14 +26,14 @@
         <VBox spacing="6.0">
             <Label fx:id="titleLabel" styleClass="panel-title"/>
             <Label fx:id="priceLabel" styleClass="price-label"/>
-            <Label fx:id="sellerLabel"/>
-            <Label fx:id="conditionLabel"/>
-            <Label fx:id="locationLabel"/>
-            <Label fx:id="ratingLabel"/>
+            <Label fx:id="sellerLabel" styleClass="detail-meta"/>
+            <Label fx:id="conditionLabel" styleClass="detail-meta"/>
+            <Label fx:id="locationLabel" styleClass="detail-meta"/>
+            <Label fx:id="ratingLabel" styleClass="detail-meta"/>
         </VBox>
     </HBox>
 
-    <Label fx:id="descriptionLabel" wrapText="true"/>
+    <Label fx:id="descriptionLabel" styleClass="detail-description" wrapText="true"/>
 
     <HBox spacing="10.0">
         <Button onAction="#onAddToCart" styleClass="secondary-button" text="Add to Cart"/>
