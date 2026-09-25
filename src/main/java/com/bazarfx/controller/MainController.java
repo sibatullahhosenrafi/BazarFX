@@ -4,12 +4,14 @@ import com.bazarfx.AppContext;
 import com.bazarfx.concurrency.NotificationService;
 import com.bazarfx.util.SceneManager;
 import com.bazarfx.util.SessionManager;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 /**
  * Shell screen: a left sidebar (Browse / Sell / Cart / My Orders / Dashboard)
@@ -29,6 +31,8 @@ public class MainController {
 
     @FXML private BorderPane mainRoot;
     @FXML private BorderPane centerPane;
+    @FXML private VBox       sidebarBox;
+    @FXML private VBox       notifPanel;
     @FXML private Label      welcomeLabel;
     @FXML private ListView<String> notificationList;
     @FXML private Button     navBrowseButton;
@@ -44,7 +48,28 @@ public class MainController {
     private void initialize() {
         welcomeLabel.setText("Hi, " + SessionManager.getCurrentUser().getUsername());
         notificationList.setItems(NotificationService.getInstance().getNotifications());
+        bindResponsiveLayout();
         openBrowse();
+    }
+
+    // ── Layout Responsiveness ───────────────────────────────────────────────
+    // Sidebar and the notifications panel are no longer fixed-pixel columns:
+    // each is bound to a percentage of the window's own width (clamped so
+    // they never get uselessly thin or absurdly wide), so resizing/maximizing
+    // the stage visibly grows or shrinks them instead of leaving dead space
+    // in the center pane.
+    private void bindResponsiveLayout() {
+        sidebarBox.prefWidthProperty().bind(Bindings.createDoubleBinding(
+                () -> clamp(232, mainRoot.getWidth() * 0.20, 300),
+                mainRoot.widthProperty()));
+
+        notifPanel.prefWidthProperty().bind(Bindings.createDoubleBinding(
+                () -> clamp(200, mainRoot.getWidth() * 0.18, 280),
+                mainRoot.widthProperty()));
+    }
+
+    private double clamp(double min, double value, double max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     // ── Theme toggle ──────────────────────────────────────────────────────────

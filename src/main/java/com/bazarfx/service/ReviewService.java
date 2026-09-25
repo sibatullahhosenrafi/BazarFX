@@ -1,48 +1,41 @@
 package com.bazarfx.service;
 
+import com.bazarfx.db.ReviewDao;
 import com.bazarfx.model.Review;
-import com.bazarfx.util.JsonStorage;
-import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Reviews now live in the relational {@code reviews} table (see
+ * {@link com.bazarfx.db.DatabaseManager}) instead of a JSON file. Every
+ * review's {@code order_id} is a FOREIGN KEY back to {@code orders(id)},
+ * so a seller's reviews and their underlying orders form a real one-to-many
+ * relationship in the database, not just two independent files.
+ */
 public class ReviewService {
 
-    private static final String FILE = "reviews.json";
-    private final List<Review> reviews = new CopyOnWriteArrayList<>();
-
-    public ReviewService() {
-        reviews.addAll(JsonStorage.<Review>loadList(FILE, new TypeToken<List<Review>>() {}.getType()));
-    }
+    private final ReviewDao reviewDao = new ReviewDao();
 
     public void addReview(Review review) {
-        reviews.add(review);
-        persist();
+        reviewDao.insert(review);
     }
 
     public double getAverageRating(String sellerUsername) {
+        List<Review> forSeller = reviewDao.findBySeller(sellerUsername);
+        if (forSeller.isEmpty()) return 0.0;
         double total = 0;
-        int count = 0;
-        for (Review r : reviews) {
-            if (r.getSellerUsername().equals(sellerUsername)) {
-                total += r.getRating();
-                count++;
-            }
+        for (Review r : forSeller) {
+            total += r.getRating();
         }
-        return count == 0 ? 0.0 : total / count;
+        return total / forSeller.size();
     }
 
     public List<Review> getForSeller(String sellerUsername) {
-        List<Review> result = new ArrayList<>();
-        for (Review r : reviews) {
-            if (r.getSellerUsername().equals(sellerUsername)) result.add(r);
-        }
-        return result;
+        return reviewDao.findBySeller(sellerUsername);
     }
 
-    private void persist() {
-        JsonStorage.saveList(FILE, new ArrayList<>(reviews));
+    /** True if the given order already has a review attached to it. */
+    public boolean hasReview(String orderId) {
+        return reviewDao.existsForOrder(orderId);
     }
 }

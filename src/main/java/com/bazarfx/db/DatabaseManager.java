@@ -11,13 +11,16 @@ import java.sql.Statement;
 /**
  * Week 6 - Relational Database with SQLite and JavaFX.
  *
- * Central JDBC access point for BazarFX's relational storage. Orders are the
- * entity chosen to live in a real relational table (they have a natural
- * lifecycle - inserted at checkout, updated as their status changes, queried
- * for the dashboard/report screens, and deleted on cancellation) while
- * Users/Products/Reviews remain on the original JSON file storage
- * (see {@link com.bazarfx.util.JsonStorage}) so both approaches from the
- * syllabus are visible side by side in the same project.
+ * Central JDBC access point for BazarFX's relational storage. Two tables
+ * live here with a real one-to-many relationship between them:
+ *   - orders: inserted at checkout, updated as status changes, queried by
+ *     the dashboard/report screens, deleted on cancellation.
+ *   - reviews: a buyer leaves at most one review per order, so each review
+ *     row stores order_id as a FOREIGN KEY back to orders(id) - that's the
+ *     "relationship between tables" the syllabus asks for. Users/Products
+ *     remain on the original JSON file storage (see
+ *     {@link com.bazarfx.util.JsonStorage}) so both approaches are visible
+ *     side by side in the same project.
  *
  * The database file is created automatically on first use at
  * data/bazarfx.db - no manual setup required.
@@ -38,7 +41,12 @@ public final class DatabaseManager {
                 createSchema();
                 schemaReady = true;
             }
-            return DriverManager.getConnection(DB_URL);
+            Connection conn = DriverManager.getConnection(DB_URL);
+            // Foreign keys are OFF by default in SQLite - must be enabled per connection.
+            try (Statement pragma = conn.createStatement()) {
+                pragma.execute("PRAGMA foreign_keys = ON");
+            }
+            return conn;
         } catch (SQLException e) {
             throw new RuntimeException("Could not open SQLite database at " + DB_URL, e);
         }
@@ -66,9 +74,25 @@ public final class DatabaseManager {
                         "created_at TEXT NOT NULL" +
                         ")";
 
+        // Child table: every review belongs to exactly one order, enforced with
+        // a FOREIGN KEY. Deleting an order cascades to its review.
+        String createReviewsTable =
+                "CREATE TABLE IF NOT EXISTS reviews (" +
+                        "id TEXT PRIMARY KEY, " +
+                        "order_id TEXT NOT NULL, " +
+                        "seller_username TEXT NOT NULL, " +
+                        "buyer_username TEXT NOT NULL, " +
+                        "rating INTEGER NOT NULL, " +
+                        "comment TEXT, " +
+                        "created_at TEXT NOT NULL, " +
+                        "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE" +
+                        ")";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON");
             stmt.execute(createOrdersTable);
+            stmt.execute(createReviewsTable);
         }
     }
 }

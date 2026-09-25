@@ -1,6 +1,8 @@
 package com.bazarfx.seed;
 
 import com.bazarfx.AppContext;
+import com.bazarfx.model.Order;
+import com.bazarfx.model.OrderStatus;
 import com.bazarfx.model.Product;
 import com.bazarfx.model.Review;
 
@@ -23,9 +25,19 @@ public class DemoDataSeeder {
         addProduct(ctx, "demo_seller", "HSC Physics & Chemistry Guide Books", "Complete set, no torn pages, some highlighting.", "Books", 650, "Used", "Rajshahi");
         addProduct(ctx, "demo_buyer", "Canon EOS 1500D DSLR", "Comes with 18-55mm lens, bag, and 32GB SD card.", "Electronics", 32000, "Used", "Dhaka");
 
-        ctx.reviewService.addReview(new Review("seed-order-1", "demo_seller", "demo_buyer", 5,
+        // Reviews reference a real order's id via a FOREIGN KEY (see DatabaseManager /
+        // ReviewDao), so we place two delivered demo orders first and then attach a
+        // review to each one - this is what actually exercises the orders<->reviews
+        // relationship instead of a stray, unrelated id.
+        Order order1 = ctx.orderService.placeOrder("demo_buyer", "seed-product-1", "iPhone 12, 128GB", 1, 42000);
+        order1.setStatus(OrderStatus.DELIVERED);
+        Order order2 = ctx.orderService.placeOrder("demo_buyer", "seed-product-2", "Dell Inspiron 15 Laptop", 1, 38500);
+        order2.setStatus(OrderStatus.DELIVERED);
+        ctx.orderService.persist();
+
+        ctx.reviewService.addReview(new Review(order1.getId(), "demo_seller", "demo_buyer", 5,
                 "Item exactly as described, smooth pickup. Highly recommended seller!"));
-        ctx.reviewService.addReview(new Review("seed-order-2", "demo_seller", "demo_buyer", 4,
+        ctx.reviewService.addReview(new Review(order2.getId(), "demo_seller", "demo_buyer", 4,
                 "Good condition, slightly delayed reply but overall a fair deal."));
     }
 
@@ -35,3 +47,4 @@ public class DemoDataSeeder {
         ctx.productService.addProduct(product);
     }
 }
+

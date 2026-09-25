@@ -27,9 +27,18 @@ public class Review implements Serializable {
     }
 
     public String getId() { return id; }
+    public String getOrderId() { return orderId; }
     public String getSellerUsername() { return sellerUsername; }
     public String getBuyerUsername() { return buyerUsername; }
     public int getRating() { return rating; }
     public String getComment() { return comment; }
     public String getCreatedAt() { return createdAt; }
+
+    public void setId(String id) { this.id = id; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
+    public void setSellerUsername(String sellerUsername) { this.sellerUsername = sellerUsername; }
+    public void setBuyerUsername(String buyerUsername) { this.buyerUsername = buyerUsername; }
+    public void setRating(int rating) { this.rating = rating; }
+    public void setComment(String comment) { this.comment = comment; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

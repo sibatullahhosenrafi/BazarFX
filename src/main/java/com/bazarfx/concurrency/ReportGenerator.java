@@ -8,7 +8,9 @@ import javafx.application.Platform;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
  * work across an ExecutorService and combining the results with Future.get().
  * This is the project's demonstration of Callable + Future.
  */
-public class ReportGenerator {
+public class ReportGenerator extends BackgroundTaskRunner {
 
     public static class ReportResult {
         public double totalRevenue;
@@ -26,11 +28,14 @@ public class ReportGenerator {
         public int totalOrders;
     }
 
-    private final ExecutorService pool = Executors.newFixedThreadPool(3, r -> {
-        Thread t = new Thread(r, "report-worker");
-        t.setDaemon(true);
-        return t;
-    });
+    public ReportGenerator() {
+        super(3, "report-worker");
+    }
+
+    @Override
+    public String describeWork() {
+        return "Aggregating marketplace revenue, top listing category and most active seller";
+    }
 
     public void generateAsync(ProductService productService, OrderService orderService,
                                Consumer<ReportResult> onComplete) {
@@ -89,9 +94,5 @@ public class ReportGenerator {
             Thread.sleep(600); // stands in for real aggregation over a larger dataset
         } catch (InterruptedException ignored) {
         }
-    }
-
-    public void shutdown() {
-        pool.shutdown();
     }
 }

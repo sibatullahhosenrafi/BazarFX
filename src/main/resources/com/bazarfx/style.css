@@ -951,3 +951,75 @@
     -fx-effect: none;
     -fx-translate-y: 1;
 }
+/* ============================================================
+   REVIEW DIALOG  (Leave a Review, from My Orders)
+   A plain, unstyled javafx.scene.control.Dialog uses OS-native chrome
+   by default and never inherits style.css. These rules are applied
+   directly to dialog.getDialogPane() in MyOrdersController so it looks
+   like part of the app instead of a bare system popup.
+   ============================================================ */
+
+.dialog-pane {
+    -fx-background-color: card-bg;
+    -fx-background-radius: 14;
+    -fx-border-color: border-soft;
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-padding: 4 4 4 4;
+}
+
+.review-dialog-content {
+    -fx-padding: 4 6 2 6;
+}
+
+.review-dialog-icon {
+    -fx-font-size: 26px;
+}
+
+.review-dialog-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: text-primary;
+}
+
+.review-dialog-subtitle {
+    -fx-text-fill: text-muted;
+    -fx-font-size: 13px;
+}
+
+.review-dialog-section-label {
+    -fx-text-fill: text-primary;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+}
+
+/* Star rating picker: 5 plain Labels acting as clickable stars. */
+.star-rating-row {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.star-button {
+    -fx-font-size: 26px;
+    -fx-text-fill: border-soft;
+    -fx-cursor: hand;
+    -fx-padding: 0 2 0 2;
+}
+
+.star-button:hover {
+    -fx-text-fill: #FBBF24;
+    -fx-scale-x: 1.12;
+    -fx-scale-y: 1.12;
+}
+
+.star-button-filled {
+    -fx-text-fill: #FBBF24;
+}
+
+.review-rating-caption {
+    -fx-text-fill: text-muted;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * sees updates through Platform.runLater, which is the standard pattern
  * for moving work from a background Thread onto the JavaFX Application Thread.
  */
-public class NotificationService {
+public class NotificationService implements Notifiable {
 
     private static final NotificationService INSTANCE = new NotificationService();
 
@@ -49,6 +49,12 @@ public class NotificationService {
                 notifications.remove(notifications.size() - 1);
             }
         });
+    }
+
+    /** Notifiable implementation - the in-app feed is one possible destination for a notification. */
+    @Override
+    public void notifyUser(String message) {
+        push(message);
     }
 
     public void shutdown() {
