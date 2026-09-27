@@ -69,6 +69,7 @@ public class MyOrdersController {
         ObservableList<Order> data =
                 FXCollections.observableArrayList(AppContext.get().orderService.getByBuyer(username));
         ordersTable.setItems(data);
+        ordersTable.refresh();
     }
 
     /** One button that is either "Cancel" (active orders) or "Review" / "Reviewed" (delivered orders). */

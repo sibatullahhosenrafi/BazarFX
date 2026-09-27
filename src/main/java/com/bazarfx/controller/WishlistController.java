@@ -2,12 +2,11 @@ package com.bazarfx.controller;
 
 import com.bazarfx.AppContext;
 import com.bazarfx.model.Product;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
+import com.bazarfx.util.SessionManager;
 import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -16,17 +15,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Browse screen - shows active listings as a wrapping grid of image cards
- * (Bikroy/Facebook-Marketplace style) instead of a plain data table.
+ * Wishlist screen - the current user's saved listings, rendered as the same
+ * card-grid style as Browse. Backed by WishlistService (wishlist.json),
+ * so saved items survive across logins.
  */
-public class BrowseController {
+public class WishlistController {
 
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> categoryFilter;
     @FXML private Label resultsCountLabel;
+    @FXML private Label emptyStateLabel;
     @FXML private FlowPane productGrid;
 
     private MainController mainController;
@@ -34,40 +34,35 @@ public class BrowseController {
     private static final double CARD_WIDTH = 190.0;
     private static final double IMAGE_HEIGHT = 140.0;
 
-    @FXML
-    private void initialize() {
-        categoryFilter.setItems(FXCollections.observableArrayList(
-                "All", "Electronics", "Vehicles", "Furniture", "Fashion", "Books", "Other"));
-        categoryFilter.setValue("All");
-
-        refresh();
-    }
-
-    /** Called by MainController right after this fragment is loaded, so a card click can navigate. */
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
     @FXML
-    private void onSearch() {
-        String keyword = searchField.getText();
-        String category = categoryFilter.getValue();
-        renderProducts(AppContext.get().productService.search(keyword, category));
+    private void initialize() {
+        refresh();
     }
 
     private void refresh() {
-        renderProducts(AppContext.get().productService.getAllActive());
-    }
+        String me = SessionManager.getCurrentUser().getUsername();
+        List<String> savedIds = AppContext.get().wishlistService.getProductIdsForUser(me);
 
-    private void renderProducts(List<Product> products) {
+        List<Product> products = new ArrayList<>();
+        for (String id : savedIds) {
+            Product p = AppContext.get().productService.getById(id);
+            if (p != null) products.add(p);
+        }
+
         productGrid.getChildren().clear();
-        resultsCountLabel.setText(products.size() + (products.size() == 1 ? " listing found" : " listings found"));
         for (Product product : products) {
             productGrid.getChildren().add(createProductCard(product));
         }
+
+        resultsCountLabel.setText(products.size() + (products.size() == 1 ? " saved listing" : " saved listings"));
+        emptyStateLabel.setVisible(products.isEmpty());
+        emptyStateLabel.setManaged(products.isEmpty());
     }
 
-    /** Builds one clickable "ad card": photo (or placeholder) on top, price/title/meta below. */
     private VBox createProductCard(Product product) {
         VBox card = new VBox(6.0);
         card.setPrefWidth(CARD_WIDTH);
@@ -97,12 +92,14 @@ public class BrowseController {
         badgeRow.getChildren().addAll(conditionBadge, categoryBadge);
 
         card.getChildren().addAll(priceLabel, titleLabel, badgeRow, locationLabel);
-        card.setOnMouseClicked(e -> openSelected(product));
+        card.setOnMouseClicked(e -> {
+            if (mainController != null) mainController.openProductDetail(product.getId());
+        });
 
         return card;
     }
 
-    /** Real photo if the listing has one on disk, otherwise a category-icon placeholder tile. */
+    /** Thumbnail with a filled heart button overlay - clicking it removes the item from the wishlist and refreshes the grid. */
     private StackPane buildThumbnail(Product product) {
         StackPane frame = new StackPane();
         frame.setPrefSize(CARD_WIDTH, IMAGE_HEIGHT);
@@ -110,6 +107,7 @@ public class BrowseController {
         frame.getStyleClass().add("card-image-frame");
 
         List<String> imagePaths = product.getImagePaths();
+        boolean hasPhoto = false;
         if (imagePaths != null && !imagePaths.isEmpty()) {
             File file = new File(imagePaths.get(0));
             if (file.exists()) {
@@ -118,13 +116,25 @@ public class BrowseController {
                 imageView.setFitWidth(CARD_WIDTH);
                 imageView.setFitHeight(IMAGE_HEIGHT);
                 frame.getChildren().add(imageView);
-                return frame;
+                hasPhoto = true;
             }
         }
+        if (!hasPhoto) {
+            Label placeholder = new Label(categoryIcon(product.getCategory()));
+            placeholder.getStyleClass().add("card-image-placeholder");
+            frame.getChildren().add(placeholder);
+        }
 
-        Label placeholder = new Label(categoryIcon(product.getCategory()));
-        placeholder.getStyleClass().add("card-image-placeholder");
-        frame.getChildren().add(placeholder);
+        Button removeHeart = new Button("\u2665");
+        removeHeart.getStyleClass().add("wishlist-heart-button-active");
+        StackPane.setAlignment(removeHeart, Pos.TOP_RIGHT);
+        removeHeart.setOnAction(e -> {
+            String me = SessionManager.getCurrentUser().getUsername();
+            AppContext.get().wishlistService.remove(me, product.getId());
+            refresh();
+        });
+        frame.getChildren().add(removeHeart);
+
         return frame;
     }
 
@@ -149,11 +159,5 @@ public class BrowseController {
 
     private String safe(String value) {
         return value == null || value.isBlank() ? "-" : value;
-    }
-
-    private void openSelected(Product product) {
-        if (mainController != null) {
-            mainController.openProductDetail(product.getId());
-        }
     }
 }

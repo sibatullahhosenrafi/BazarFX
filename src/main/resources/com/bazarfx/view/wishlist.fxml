@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14.0" styleClass="browse-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bazarfx.controller.WishlistController">
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+
+    <Label styleClass="panel-title" text="&#9829;  My Wishlist"/>
+    <Label fx:id="resultsCountLabel" styleClass="results-count"/>
+    <Label fx:id="emptyStateLabel" styleClass="detail-meta"
+           text="You haven't saved any listings yet. Tap the heart on a product to save it here."
+           wrapText="true"/>
+
+    <ScrollPane fitToWidth="true" styleClass="products-scroll" VBox.vgrow="ALWAYS">
+        <FlowPane fx:id="productGrid" hgap="18.0" vgap="18.0" styleClass="product-grid"/>
+    </ScrollPane>
+</VBox>

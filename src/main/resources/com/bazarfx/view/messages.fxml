@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox spacing="14.0" styleClass="browse-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bazarfx.controller.MessagesController">
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+
+    <VBox prefWidth="280.0" spacing="8.0">
+        <Label styleClass="panel-title" text="&#128172;  Messages"/>
+        <Label fx:id="emptyStateLabel" styleClass="detail-meta" wrapText="true"
+               text="No conversations yet. Message a seller from any product page to start one."/>
+        <ListView fx:id="conversationListView" VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+    <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+        <Label fx:id="chatHeaderLabel" styleClass="panel-title" text="Select a conversation"/>
+        <ListView fx:id="chatListView" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="10.0">
+            <TextField fx:id="messageField" onAction="#onSend" promptText="Type a message..." HBox.hgrow="ALWAYS"/>
+            <Button onAction="#onSend" styleClass="primary-button" text="Send"/>
+        </HBox>
+    </VBox>
+</HBox>

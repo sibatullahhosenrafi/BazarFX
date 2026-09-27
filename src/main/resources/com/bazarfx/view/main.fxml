@@ -29,6 +29,10 @@
                         styleClass="side-nav-button,cart-btn"    text="&#128722;  Cart"/>
                 <Button fx:id="navOrdersButton"  maxWidth="Infinity" onAction="#openMyOrders"
                         styleClass="side-nav-button,orders-btn"  text="&#128230;  My Orders"/>
+                <Button fx:id="navWishlistButton" maxWidth="Infinity" onAction="#openWishlist"
+                        styleClass="side-nav-button,wishlist-btn" text="&#9825;  Wishlist"/>
+                <Button fx:id="navMessagesButton" maxWidth="Infinity" onAction="#openMessages"
+                        styleClass="side-nav-button,msg-btn"     text="&#128172;  Messages"/>
                 <Button fx:id="navDashboardButton" maxWidth="Infinity" onAction="#openDashboard"
                         styleClass="side-nav-button,dash-btn"   text="&#128202;  Dashboard"/>
             </VBox>

@@ -39,6 +39,19 @@ public class DemoDataSeeder {
                 "Item exactly as described, smooth pickup. Highly recommended seller!"));
         ctx.reviewService.addReview(new Review(order2.getId(), "demo_seller", "demo_buyer", 4,
                 "Good condition, slightly delayed reply but overall a fair deal."));
+
+        // A short demo chat thread, so the Messages screen isn't empty on first run.
+        ctx.messageService.send("demo_buyer", "demo_seller", "seed-product-1", "iPhone 12, 128GB",
+                "Hi, is this still available?");
+        ctx.messageService.send("demo_seller", "demo_buyer", "seed-product-1", "iPhone 12, 128GB",
+                "Yes, still available! When would you like to pick it up?");
+
+        // Save one real listing to demo_buyer's wishlist (needs a real product id,
+        // unlike the loose "seed-product-N" placeholders orders/messages use above).
+        var products = ctx.productService.getAllSnapshot();
+        if (products.size() > 2) {
+            ctx.wishlistService.add("demo_buyer", products.get(2).getId());
+        }
     }
 
     private static void addProduct(AppContext ctx, String seller, String title, String description,

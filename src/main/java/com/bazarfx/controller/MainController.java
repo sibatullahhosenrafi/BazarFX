@@ -14,13 +14,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Shell screen: a left sidebar (Browse / Sell / Cart / My Orders / Dashboard)
- * plus a center pane whose content is swapped between screens, and a live
- * notification list fed by the background NotificationService.
+ * Shell screen: a left sidebar (Browse / Sell / Cart / My Orders / Wishlist /
+ * Messages / Dashboard) plus a center pane whose content is swapped between
+ * screens, and a live notification list fed by the background
+ * NotificationService.
  *
  * Each sidebar button carries its own semantic CSS class (browse-btn, sell-btn,
- * cart-btn, orders-btn, dash-btn) so the active state gradient matches the
- * button's own color.
+ * cart-btn, orders-btn, wishlist-btn, msg-btn, dash-btn) so the active state
+ * gradient matches the button's own color.
  *
  * The theme toggle button switches dark-mode on and off by adding / removing
  * the "dark-mode" CSS class from mainRoot. All looked-up color tokens are
@@ -39,16 +40,20 @@ public class MainController {
     @FXML private Button     navSellButton;
     @FXML private Button     navCartButton;
     @FXML private Button     navOrdersButton;
+    @FXML private Button     navWishlistButton;
+    @FXML private Button     navMessagesButton;
     @FXML private Button     navDashboardButton;
     @FXML private Button     themeToggleButton;
 
     private boolean darkMode = false;
+    private static final String MESSAGES_LABEL = "\uD83D\uDCAC  Messages";
 
     @FXML
     private void initialize() {
         welcomeLabel.setText("Hi, " + SessionManager.getCurrentUser().getUsername());
         notificationList.setItems(NotificationService.getInstance().getNotifications());
         bindResponsiveLayout();
+        bindUnreadMessageBadge();
         openBrowse();
     }
 
@@ -72,6 +77,20 @@ public class MainController {
         return Math.max(min, Math.min(max, value));
     }
 
+    // ── Messages unread badge ───────────────────────────────────────────────
+    // AppContext.unreadMessagePoller runs continuously in the background
+    // (ScheduledExecutorService), independent of which screen is open; here
+    // we just listen for its published count and update the sidebar label.
+    private void bindUnreadMessageBadge() {
+        var unreadCount = AppContext.get().unreadMessagePoller.unreadCountProperty();
+        unreadCount.addListener((obs, oldVal, newVal) -> updateMessagesButtonLabel(newVal.intValue()));
+        updateMessagesButtonLabel(unreadCount.get());
+    }
+
+    private void updateMessagesButtonLabel(int count) {
+        navMessagesButton.setText(MESSAGES_LABEL + (count > 0 ? "  (" + count + ")" : ""));
+    }
+
     // ── Theme toggle ──────────────────────────────────────────────────────────
 
     @FXML
@@ -90,17 +109,23 @@ public class MainController {
 
     private void setActiveNavButton(Button active) {
         for (Button b : new Button[]{
-                navBrowseButton, navSellButton, navCartButton,
-                navOrdersButton, navDashboardButton}) {
+                navBrowseButton, navSellButton, navCartButton, navOrdersButton,
+                navWishlistButton, navMessagesButton, navDashboardButton}) {
             if (b != null) b.getStyleClass().remove("side-nav-button-active");
         }
         if (active != null) active.getStyleClass().add("side-nav-button-active");
+    }
+
+    /** Any navigation away from Messages should stop the live chat-polling background task. */
+    private void stopConversationPolling() {
+        AppContext.get().conversationPoller.stop();
     }
 
     // ── Navigation actions ────────────────────────────────────────────────────
 
     @FXML
     public void openBrowse() {
+        stopConversationPolling();
         setActiveNavButton(navBrowseButton);
         Parent[] rootHolder = new Parent[1];
         BrowseController controller =
@@ -111,6 +136,7 @@ public class MainController {
 
     @FXML
     private void openSell() {
+        stopConversationPolling();
         setActiveNavButton(navSellButton);
         Parent[] rootHolder = new Parent[1];
         SellController controller =
@@ -121,6 +147,7 @@ public class MainController {
 
     @FXML
     private void openCart() {
+        stopConversationPolling();
         setActiveNavButton(navCartButton);
         Parent[] rootHolder = new Parent[1];
         CartController controller =
@@ -131,18 +158,42 @@ public class MainController {
 
     @FXML
     private void openMyOrders() {
+        stopConversationPolling();
         setActiveNavButton(navOrdersButton);
         centerPane.setCenter(SceneManager.loadFragment("my_orders.fxml"));
     }
 
     @FXML
+    private void openWishlist() {
+        stopConversationPolling();
+        setActiveNavButton(navWishlistButton);
+        Parent[] rootHolder = new Parent[1];
+        WishlistController controller =
+                SceneManager.loadFragmentWithController("wishlist.fxml", rootHolder);
+        controller.setMainController(this);
+        centerPane.setCenter(rootHolder[0]);
+    }
+
+    @FXML
+    private void openMessages() {
+        setActiveNavButton(navMessagesButton);
+        Parent[] rootHolder = new Parent[1];
+        MessagesController controller =
+                SceneManager.loadFragmentWithController("messages.fxml", rootHolder);
+        controller.setMainController(this);
+        centerPane.setCenter(rootHolder[0]);
+    }
+
+    @FXML
     private void openDashboard() {
+        stopConversationPolling();
         setActiveNavButton(navDashboardButton);
         centerPane.setCenter(SceneManager.loadFragment("dashboard.fxml"));
     }
 
     @FXML
     private void onLogout() {
+        stopConversationPolling();
         SessionManager.logout();
         AppContext.get().cart.clear();
         SceneManager.switchTo("login.fxml", "BazarFX - Log In");
@@ -151,6 +202,7 @@ public class MainController {
     // ── Called from child controllers ─────────────────────────────────────────
 
     public void openProductDetail(String productId) {
+        stopConversationPolling();
         Parent[] rootHolder = new Parent[1];
         ProductDetailController controller =
                 SceneManager.loadFragmentWithController("product_detail.fxml", rootHolder);
@@ -160,6 +212,18 @@ public class MainController {
     }
 
     public void openCheckout() {
+        stopConversationPolling();
         centerPane.setCenter(SceneManager.loadFragment("checkout.fxml"));
+    }
+
+    /** Called from ProductDetailController's "Message Seller" button - opens Messages already scoped to that chat. */
+    public void openMessagesWith(String sellerUsername, String productId, String productTitle) {
+        setActiveNavButton(navMessagesButton);
+        Parent[] rootHolder = new Parent[1];
+        MessagesController controller =
+                SceneManager.loadFragmentWithController("messages.fxml", rootHolder);
+        controller.setMainController(this);
+        centerPane.setCenter(rootHolder[0]);
+        controller.openWith(sellerUsername, productId, productTitle);
     }
 }

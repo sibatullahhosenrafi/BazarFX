@@ -21,6 +21,9 @@ import java.sql.Statement;
  *     remain on the original JSON file storage (see
  *     {@link com.bazarfx.util.JsonStorage}) so both approaches are visible
  *     side by side in the same project.
+ *   - messages: buyer/seller in-app chat. Every row is one message between
+ *     two usernames, optionally scoped to a product_id so "chat about this
+ *     listing" and general messaging share one table/DAO.
  *
  * The database file is created automatically on first use at
  * data/bazarfx.db - no manual setup required.
@@ -88,11 +91,27 @@ public final class DatabaseManager {
                         "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE" +
                         ")";
 
+        // Buyer/seller in-app chat. product_id is deliberately not a FOREIGN
+        // KEY, since products still live in JSON, not this database - a
+        // message just carries the id/title along for display.
+        String createMessagesTable =
+                "CREATE TABLE IF NOT EXISTS messages (" +
+                        "id TEXT PRIMARY KEY, " +
+                        "sender_username TEXT NOT NULL, " +
+                        "receiver_username TEXT NOT NULL, " +
+                        "product_id TEXT, " +
+                        "product_title TEXT, " +
+                        "content TEXT NOT NULL, " +
+                        "created_at TEXT NOT NULL, " +
+                        "is_read INTEGER NOT NULL DEFAULT 0" +
+                        ")";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON");
             stmt.execute(createOrdersTable);
             stmt.execute(createReviewsTable);
+            stmt.execute(createMessagesTable);
         }
     }
 }

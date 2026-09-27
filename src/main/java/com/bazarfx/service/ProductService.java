@@ -43,6 +43,16 @@ public class ProductService {
     }
 
     public List<Product> search(String keyword, String category) {
+        return search(keyword, category, null, null);
+    }
+
+    /**
+     * Same keyword/category search, plus an optional price range - either
+     * bound can be null to mean "no limit". Rating-based filtering and
+     * sorting live in BrowseController instead, since seller rating comes
+     * from ReviewService, not this class.
+     */
+    public List<Product> search(String keyword, String category, Double minPrice, Double maxPrice) {
         List<Product> result = new ArrayList<>();
         String kw = keyword == null ? "" : keyword.toLowerCase();
         for (Product p : products.values()) {
@@ -51,7 +61,9 @@ public class ProductService {
                     || p.getTitle().toLowerCase().contains(kw)
                     || p.getDescription().toLowerCase().contains(kw);
             boolean matchesCategory = category == null || category.equals("All") || category.equals(p.getCategory());
-            if (matchesKeyword && matchesCategory) result.add(p);
+            boolean matchesMin = minPrice == null || p.getPrice() >= minPrice;
+            boolean matchesMax = maxPrice == null || p.getPrice() <= maxPrice;
+            if (matchesKeyword && matchesCategory && matchesMin && matchesMax) result.add(p);
         }
         return result;
     }

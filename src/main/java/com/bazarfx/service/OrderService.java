@@ -44,13 +44,32 @@ public class OrderService {
         return orders.get(id);
     }
 
-    /** Queries the database directly so this always reflects the latest persisted state. */
+    /**
+     * Reads from the database so orders placed in earlier sessions still show
+     * up, but returns the already-cached in-memory instance whenever one
+     * exists instead of the fresh row just read from SQLite.
+     *
+     * This matters because OrderStatusSimulator holds a direct reference to
+     * the exact Order object created by placeOrder() and mutates it in place
+     * every few seconds. If this method replaced that cached instance with a
+     * brand-new object built from a SELECT, the simulator would keep updating
+     * the orphaned old object while persist() kept re-saving the stale new
+     * one - which is exactly what made orders look permanently stuck on
+     * PENDING once "My Orders" had been opened once.
+     */
     public List<Order> getByBuyer(String username) {
         List<Order> fromDb = orderDao.findByBuyer(username);
+        List<Order> result = new ArrayList<>();
         for (Order o : fromDb) {
-            orders.put(o.getId(), o);
+            Order cached = orders.get(o.getId());
+            if (cached != null) {
+                result.add(cached);
+            } else {
+                orders.put(o.getId(), o);
+                result.add(o);
+            }
         }
-        return fromDb;
+        return result;
     }
 
     public List<Order> getAllSnapshot() {

@@ -37,7 +37,8 @@
 
     <HBox spacing="10.0">
         <Button onAction="#onAddToCart" styleClass="secondary-button" text="Add to Cart"/>
-        <Button onAction="#onAddToWishlist" styleClass="secondary-button" text="Add to Wishlist"/>
+        <Button fx:id="wishlistButton" onAction="#onAddToWishlist" styleClass="secondary-button" text="&#9825;  Add to Wishlist"/>
+        <Button fx:id="messageSellerButton" onAction="#onMessageSeller" styleClass="secondary-button" text="&#128172;  Message Seller"/>
         <Button onAction="#onBuyNow" styleClass="primary-button" text="Buy Now"/>
     </HBox>
 </VBox>

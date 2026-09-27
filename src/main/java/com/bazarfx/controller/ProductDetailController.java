@@ -4,8 +4,10 @@ import com.bazarfx.AppContext;
 import com.bazarfx.model.CartItem;
 import com.bazarfx.model.Product;
 import com.bazarfx.concurrency.NotificationService;
+import com.bazarfx.util.SessionManager;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,6 +26,8 @@ public class ProductDetailController {
     @FXML private Label ratingLabel;
     @FXML private ImageView photoView;
     @FXML private HBox thumbnailBox;
+    @FXML private Button wishlistButton;
+    @FXML private Button messageSellerButton;
 
     private MainController mainController;
     private Product product;
@@ -47,6 +51,11 @@ public class ProductDetailController {
         ratingLabel.setText(avg == 0 ? "No ratings yet" : String.format("Seller rating: %.1f / 5", avg));
 
         buildThumbnails();
+        refreshWishlistButton();
+
+        // A seller can't message themselves about their own listing.
+        String me = SessionManager.getCurrentUser().getUsername();
+        messageSellerButton.setDisable(me.equals(product.getSellerUsername()));
 
         if (!product.getImagePaths().isEmpty()) {
             showMainPhoto(product.getImagePaths().get(0));
@@ -88,12 +97,29 @@ public class ProductDetailController {
         NotificationService.getInstance().push("Added \"" + product.getTitle() + "\" to your cart.");
     }
 
+    /** Toggles this listing on/off the current user's wishlist and updates the button label. */
     @FXML
     private void onAddToWishlist() {
-        if (!AppContext.get().wishlistProductIds.contains(product.getId())) {
-            AppContext.get().wishlistProductIds.add(product.getId());
-            NotificationService.getInstance().push("Saved \"" + product.getTitle() + "\" to your wishlist.");
-        }
+        String me = SessionManager.getCurrentUser().getUsername();
+        boolean nowSaved = AppContext.get().wishlistService.toggle(me, product.getId());
+        refreshWishlistButton();
+        NotificationService.getInstance().push(nowSaved
+                ? "Saved \"" + product.getTitle() + "\" to your wishlist."
+                : "Removed \"" + product.getTitle() + "\" from your wishlist.");
+    }
+
+    private void refreshWishlistButton() {
+        String me = SessionManager.getCurrentUser().getUsername();
+        boolean saved = AppContext.get().wishlistService.isWishlisted(me, product.getId());
+        wishlistButton.setText(saved ? "\u2665  Saved to Wishlist" : "\u2661  Add to Wishlist");
+        wishlistButton.getStyleClass().removeAll("secondary-button", "wishlist-saved-button");
+        wishlistButton.getStyleClass().add(saved ? "wishlist-saved-button" : "secondary-button");
+    }
+
+    /** Jumps straight into a chat with this listing's seller, scoped to this product. */
+    @FXML
+    private void onMessageSeller() {
+        mainController.openMessagesWith(product.getSellerUsername(), product.getId(), product.getTitle());
     }
 
     @FXML

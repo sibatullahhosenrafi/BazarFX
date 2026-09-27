@@ -22,6 +22,17 @@
         <Button onAction="#onSearch" styleClass="primary-button" text="Search"/>
     </HBox>
 
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <Label styleClass="detail-meta" text="Price:"/>
+        <TextField fx:id="minPriceField" prefWidth="90.0" promptText="Min"/>
+        <Label styleClass="detail-meta" text="-"/>
+        <TextField fx:id="maxPriceField" prefWidth="90.0" promptText="Max"/>
+        <ComboBox fx:id="minRatingFilter" prefWidth="140.0"/>
+        <ComboBox fx:id="sortFilter" prefWidth="180.0"/>
+        <Button onAction="#onSearch" styleClass="secondary-button" text="Apply Filters"/>
+        <Button onAction="#onClearFilters" styleClass="link-button" text="Clear"/>
+    </HBox>
+
     <Label fx:id="resultsCountLabel" styleClass="results-count"/>
 
     <ScrollPane fitToWidth="true" styleClass="products-scroll" VBox.vgrow="ALWAYS">
